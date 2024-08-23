@@ -35,6 +35,8 @@ type Config struct {
 	Kind       string `json:"kind" yaml:"kind" yamltags:"required"`
 
 	Logging Logging `json:"logging" yaml:"logging"`
+	// OAuthClientFile is the path to the JSON file containing the OAuth client secret.
+	OAuthClientFile string `json:"oauthClientFile,omitempty" yaml:"oauthClientFile,omitempty"`
 }
 
 type Logging struct {
@@ -49,6 +51,13 @@ func (c *Config) GetLogLevel() string {
 	return c.Logging.Level
 }
 
+func (c *Config) GetLogDir() string {
+	if c.Logging.LogDir == "" {
+		return os.TempDir()
+	}
+	return c.Logging.LogDir
+}
+
 // GetConfigDir returns the configuration directory
 func (c *Config) GetConfigDir() string {
 	configFile := viper.ConfigFileUsed()
@@ -58,6 +67,11 @@ func (c *Config) GetConfigDir() string {
 
 	// Since there is no config file we will use the default config directory.
 	return binHome()
+}
+
+// GetOAuthCredentialsFile returns the path to the file where the refresh token should be stored.
+func (c *Config) GetOAuthCredentialsFile() string {
+	return filepath.Join(c.GetConfigDir(), "credentials.json")
 }
 
 // IsValid validates the configuration and returns any errors.
