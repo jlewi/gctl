@@ -2,9 +2,11 @@ package gsuite
 
 import (
 	"context"
+	"encoding/base64"
 	"fmt"
 	"github.com/jlewi/gctl/config"
 	"github.com/jlewi/gctl/util"
+	"github.com/pkg/errors"
 	"golang.org/x/oauth2"
 	"google.golang.org/api/gmail/v1"
 	"google.golang.org/api/option"
@@ -32,10 +34,55 @@ type EmailInfo struct {
 	Date    time.Time
 }
 
+type Email struct {
+	ID      string
+	From    string
+	To      string
+	Subject string
+	Body    string
+	Date    time.Time
+}
+
 // Inbox is a struct that provides routines for interacting with your inbox.
 type Inbox struct {
 	config config.Config
 	svc    *gmail.Service
+}
+
+func (i *Inbox) GetMessage(ctx context.Context, messageID string) (*Email, error) {
+	// Replace "path/to/your/credentials.json" with the path to your downloaded client configuration file
+	user := "me" // Special value to indicate the authenticated user
+
+	fullMsg, err := i.svc.Users.Messages.Get(user, messageID).Format("full").Do()
+	if err != nil {
+		return nil, fmt.Errorf("unable to search Gmail: %v", err)
+	}
+
+	if err != nil {
+		return nil, errors.Wrapf(err, "Error retrieving message with id %s", messageID)
+	}
+
+	msg := &Email{}
+	for _, header := range fullMsg.Payload.Headers {
+		switch header.Name {
+		case "From":
+			msg.From = header.Value
+		case "To":
+			msg.To = header.Value
+		case "Subject":
+			msg.Subject = header.Value
+		}
+	}
+
+	// The body isn't always set for certain types of messages
+	// https://developers.google.com/gmail/api/reference/rest/v1/users.messages#Message.MessagePart
+	decoded, err := base64.URLEncoding.DecodeString(fullMsg.Payload.Body.Data)
+	if err != nil {
+		return msg, fmt.Errorf("failed to decode base64 URL-encoded string: %v", err)
+	}
+	msg.Body = string(decoded)
+
+	return msg, nil
 }
 
 func (i *Inbox) Search(ctx context.Context, query string, maxResults int64, pageToken string) ([]*EmailInfo, error) {
