@@ -62,7 +62,9 @@ func (i *Inbox) GetMessage(ctx context.Context, messageID string) (*Email, error
 		return nil, errors.Wrapf(err, "Error retrieving message with id %s", messageID)
 	}
 
-	msg := &Email{}
+	msg := &Email{
+		Date: parseEpochMillis(fullMsg.InternalDate).Local(),
+	}
 	for _, header := range fullMsg.Payload.Headers {
 		switch header.Name {
 		case "From":
@@ -76,11 +78,25 @@ func (i *Inbox) GetMessage(ctx context.Context, messageID string) (*Email, error
 
 	// The body isn't always set for certain types of messages
 	// https://developers.google.com/gmail/api/reference/rest/v1/users.messages#Message.MessagePart
-	decoded, err := base64.URLEncoding.DecodeString(fullMsg.Payload.Body.Data)
-	if err != nil {
-		return msg, fmt.Errorf("failed to decode base64 URL-encoded string: %v", err)
+	if fullMsg.Payload.Body.Data != "" {
+		decoded, err := base64.URLEncoding.DecodeString(fullMsg.Payload.Body.Data)
+		if err != nil {
+			return msg, fmt.Errorf("failed to decode base64 URL-encoded string: %v", err)
+		}
+		msg.Body = string(decoded)
 	}
-	msg.Body = string(decoded)
+
+	if len(fullMsg.Payload.Parts) > 0 {
+		for _, part := range fullMsg.Payload.Parts {
+			if part.MimeType == "text/plain" || part.MimeType == "text/html" {
+				decoded, err := base64.URLEncoding.DecodeString(part.Body.Data)
+				if err != nil {
+					return msg, fmt.Errorf("failed to decode base64 URL-encoded string: %v", err)
+				}
+				msg.Body += string(decoded)
+			}
+		}
+	}
 
 	return msg, nil
 }
