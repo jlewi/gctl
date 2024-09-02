@@ -10,6 +10,7 @@ import (
 	"github.com/spf13/cobra"
 	"go.uber.org/zap"
 	"golang.org/x/oauth2"
+	"google.golang.org/api/drive/v3"
 	"google.golang.org/api/gmail/v1"
 	"io"
 	"os"
@@ -79,7 +80,7 @@ func (a *App) SetupTokenSource() error {
 		return errors.New("Config is nil; call LoadConfig first")
 	}
 
-	flow, err := gcp.NewWebFlowHelper(a.Config.OAuthClientFile, []string{gmail.GmailReadonlyScope})
+	flow, err := gcp.NewWebFlowHelper(a.Config.OAuthClientFile, []string{gmail.GmailReadonlyScope, drive.DriveScope})
 	if err != nil {
 		return err
 	}

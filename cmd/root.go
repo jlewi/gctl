@@ -24,6 +24,7 @@ func NewRootCmd() *cobra.Command {
 
 	rootCmd.AddCommand(NewConfigCmd())
 	rootCmd.AddCommand(NewMailCmd())
+	rootCmd.AddCommand(NewDriveCmd())
 	rootCmd.AddCommand(NewVersionCmd(appName, os.Stdout))
 	return rootCmd
 }

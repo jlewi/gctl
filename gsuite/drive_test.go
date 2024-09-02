@@ -6,7 +6,7 @@ import (
 	"testing"
 )
 
-func Test_Search(t *testing.T) {
+func Test_ImportHTML(t *testing.T) {
 	if os.Getenv("GITHUB_ACTIONS") != "" {
 		t.Skip("Skipping test in GitHub Actions")
 	}
@@ -20,14 +20,12 @@ func Test_Search(t *testing.T) {
 		t.Fatalf("Error setting up token source: %v", err)
 	}
 
-	inbox, err := NewInbox(*app.Config, app.TS)
+	d, err := NewDrive(*app.Config, app.TS)
 	if err != nil {
-		t.Fatalf("Error creating inbox: %v", err)
+		t.Fatalf("Error creating drive: %v", err)
 	}
 
-	results, err := inbox.Search(context.Background(), "from:me", 10, "")
-	if err != nil {
-		t.Fatalf("Error searching inbox: %v", err)
+	if err := d.ImportHTMLToGoogleDoc(context.Background(), "/tmp/notes.html", "notes.html"); err != nil {
+		t.Fatalf("Error importing the html document: %v", err)
 	}
-	t.Logf("Found %d messages", len(results))
 }
