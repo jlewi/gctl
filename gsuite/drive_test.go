@@ -25,7 +25,7 @@ func Test_ImportHTML(t *testing.T) {
 		t.Fatalf("Error creating drive: %v", err)
 	}
 
-	if err := d.ImportHTMLToGoogleDoc(context.Background(), "/tmp/notes.html", "notes.html"); err != nil {
+	if _, err := d.ImportToGoogleDoc(context.Background(), "/tmp/notes.html", "notes.html", ""); err != nil {
 		t.Fatalf("Error importing the html document: %v", err)
 	}
 }
