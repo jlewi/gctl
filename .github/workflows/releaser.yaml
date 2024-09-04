@@ -34,7 +34,7 @@ jobs:
     # Its pure go so we can cross-compile for mac on ubuntu.
     runs-on: ubuntu-latest    
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - run: git fetch --force --tags
@@ -43,7 +43,7 @@ jobs:
           go-version: stable
       # More assembly might be required: Docker logins, GPG, etc. It all depends
       # on your needs.
-      - uses: goreleaser/goreleaser-action@v4
+      - uses: goreleaser/goreleaser-action@v6
         with:
           # either 'goreleaser' (default) or 'goreleaser-pro':
           distribution: goreleaser
