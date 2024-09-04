@@ -2,9 +2,10 @@ package cmd
 
 import (
 	"fmt"
-	"gopkg.in/yaml.v3"
 	"os"
 	"strings"
+
+	"gopkg.in/yaml.v3"
 
 	"github.com/jlewi/gctl/config"
 	"github.com/pkg/errors"
@@ -68,7 +69,7 @@ func NewSetConfigCmd() *cobra.Command {
 func NewGetConfigCmd() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "get",
-		Short: fmt.Sprintf("Dump %S configuration as YAML", appName),
+		Short: fmt.Sprintf("Dump %s configuration as YAML", appName),
 		Run: func(cmd *cobra.Command, args []string) {
 			err := func() error {
 				if err := config.InitViper(cmd); err != nil {

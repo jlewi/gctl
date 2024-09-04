@@ -4,9 +4,6 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/go-logr/zapr"
-	"go.uber.org/zap"
-
 	"github.com/spf13/cobra"
 )
 
@@ -34,9 +31,4 @@ func NewVersionCmd(name string, w io.Writer) *cobra.Command {
 		},
 	}
 	return cmd
-}
-
-func logVersion() {
-	log := zapr.NewLogger(zap.L())
-	log.Info("binary version", "version", version, "commit", commit, "date", date, "builtBy", builtBy)
 }
