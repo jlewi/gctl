@@ -4,12 +4,13 @@ import (
 	"bytes"
 	"context"
 	"fmt"
+	"os"
+
 	"github.com/jlewi/gctl/config"
 	"github.com/jlewi/gctl/util"
 	"github.com/pkg/errors"
 	"golang.org/x/oauth2"
 	"google.golang.org/api/googleapi"
-	"os"
 
 	"google.golang.org/api/drive/v3"
 	"google.golang.org/api/option"

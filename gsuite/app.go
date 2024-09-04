@@ -3,6 +3,11 @@ package gsuite
 import (
 	"context"
 	"fmt"
+	"io"
+	"os"
+	"path/filepath"
+	"strings"
+
 	"github.com/go-logr/zapr"
 	"github.com/jlewi/gctl/config"
 	"github.com/jlewi/monogo/gcp"
@@ -12,10 +17,6 @@ import (
 	"golang.org/x/oauth2"
 	"google.golang.org/api/drive/v3"
 	"google.golang.org/api/gmail/v1"
-	"io"
-	"os"
-	"path/filepath"
-	"strings"
 )
 
 // App is a struct that provides routines for configuring the application.

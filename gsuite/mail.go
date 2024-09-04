@@ -4,13 +4,14 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
+	"time"
+
 	"github.com/jlewi/gctl/config"
 	"github.com/jlewi/gctl/util"
 	"github.com/pkg/errors"
 	"golang.org/x/oauth2"
 	"google.golang.org/api/gmail/v1"
 	"google.golang.org/api/option"
-	"time"
 )
 
 func NewInbox(cfg config.Config, ts oauth2.TokenSource) (*Inbox, error) {

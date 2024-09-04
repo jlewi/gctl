@@ -3,11 +3,14 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"github.com/go-logr/zapr"
+	"go.uber.org/zap"
+	"os"
+
 	"github.com/jlewi/gctl/gsuite"
 	"github.com/jlewi/monogo/helpers"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
-	"os"
 )
 
 // NewMailCmd adds commands to deal with gmail
@@ -46,8 +49,10 @@ func NewMailSearchCmd() *cobra.Command {
 				query := args[0]
 				results, err := inbox.Search(context.Background(), query, maxResults, pageToken)
 
-				app.Out.Write([]byte(helpers.PrettyString(results)))
-				app.Out.Write([]byte("\n"))
+				log := zapr.NewLogger(zap.L())
+				if _, err := fmt.Fprintf(app.Out, "%s\n", helpers.PrettyString(results)); err != nil {
+					log.Error(err, "Failed to write results to output")
+				}
 
 				if err != nil {
 					return errors.Wrapf(err, "Error searching gmail")
@@ -91,8 +96,10 @@ func NewMailGetCmd() *cobra.Command {
 				messageID := args[0]
 				results, err := inbox.GetMessage(context.Background(), messageID)
 
-				app.Out.Write([]byte(helpers.PrettyString(results)))
-				app.Out.Write([]byte("\n"))
+				log := zapr.NewLogger(zap.L())
+				if _, err := fmt.Fprintf(app.Out, "%s\n", helpers.PrettyString(results)); err != nil {
+					log.Error(err, "Failed to write results to output")
+				}
 
 				if err != nil {
 					return errors.Wrapf(err, "Error getting message")

@@ -2,9 +2,10 @@ package cmd
 
 import (
 	"fmt"
-	"gopkg.in/yaml.v3"
 	"os"
 	"strings"
+
+	"gopkg.in/yaml.v3"
 
 	"github.com/jlewi/gctl/config"
 	"github.com/pkg/errors"

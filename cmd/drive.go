@@ -2,11 +2,12 @@ package cmd
 
 import (
 	"fmt"
+	"os"
+
 	"github.com/jlewi/gctl/gsuite"
 	"github.com/jlewi/monogo/helpers"
 	"github.com/spf13/cobra"
 	"golang.org/x/net/context"
-	"os"
 )
 
 func NewDriveCmd() *cobra.Command {
@@ -63,7 +64,7 @@ func NewImportCmd() *cobra.Command {
 	cmd.Flags().StringVarP(&title, "title", "t", "", "The title for the document")
 	cmd.Flags().StringVarP(&path, "file", "f", "", "The file to import")
 	cmd.Flags().StringVarP(&folderID, "folder-id", "p", "", "The id of the folder to import the document to")
-	cmd.MarkFlagRequired("file")
+	helpers.IgnoreError(cmd.MarkFlagRequired("file"))
 	return cmd
 }
 
@@ -95,7 +96,7 @@ func NewSearchCmd() *cobra.Command {
 					fmt.Fprintf(app.Out, "Error searching Google Drive: %v\n", err)
 					return err
 				}
-				fmt.Fprintf(app.Out, helpers.PrettyString(results))
+				fmt.Fprintf(app.Out, "%s\n", helpers.PrettyString(results))
 
 				return nil
 			}()
@@ -110,6 +111,6 @@ func NewSearchCmd() *cobra.Command {
 	cmd.Flags().Int64VarP(&maxResults, "max-results", "m", 25, "Maximum number of results to return")
 	cmd.Flags().StringVarP(&pageToken, "page-token", "p", "", "The page token to use to fetch the next page of results")
 	cmd.Flags().StringVarP(&query, "query", "q", "", "The query to run")
-	cmd.MarkFlagRequired("query")
+	helpers.IgnoreError(cmd.MarkFlagRequired("query"))
 	return cmd
 }
